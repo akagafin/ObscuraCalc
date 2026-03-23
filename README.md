@@ -1,6 +1,6 @@
 # ObscuraCalc
 
-ObscuraCalc is an offline-first Android application that combines a real scientific calculator, offline unit and currency conversion, and an authenticated private space for encrypted file storage.
+ObscuraCalc is an offline-first Android application that combines a real scientific calculator, offline unit and currency conversion, an authenticated private space for encrypted file storage, and it's 100% made of AI SLOP .
 
 The project is designed for privacy-respecting distribution channels such as F-Droid and direct APK delivery. It does not include analytics, advertising, telemetry, cloud sync, user accounts, or mandatory Google Play Services.
 

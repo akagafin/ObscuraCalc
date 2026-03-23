@@ -1,0 +1,18 @@
+# F-Droid App Description
+
+ObscuraCalc is an offline-first Android app that combines a scientific calculator, offline unit conversion tools, and a local encrypted private space for app-held files.
+
+The calculator is real and fully usable on its own. It supports scientific functions, constants, memory operations, and a deterministic calculation engine. The converter works completely offline and includes length, mass, area, volume, temperature, speed, time, digital size, and manually managed currency rates imported from JSON or CSV.
+
+The private space is a user-configured vault for files stored inside app-private storage. Vault content is encrypted locally on the device and is only available after successful authentication. Optional biometric unlock is supported through Android's public biometric APIs.
+
+ObscuraCalc does not use analytics, advertising, telemetry, accounts, cloud sync, or Google Play Services. It does not request internet access.
+
+Important limits:
+
+- ObscuraCalc is a user-space app, not a system-level secure folder.
+- It does not clone arbitrary third-party Android apps.
+- It does not claim protection against rooted devices, compromised operating systems, or forensic extraction.
+- Exported files leave the vault boundary and become the user's responsibility.
+
+ObscuraCalc is designed for honest, local-only privacy rather than exaggerated security claims.

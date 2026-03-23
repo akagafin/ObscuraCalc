@@ -1,0 +1,1 @@
+Scientific calculator, offline converters, and a local encrypted private space

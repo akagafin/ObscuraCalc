@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +24,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.obscuracalc.core.security.model.SecuritySettings
@@ -68,9 +70,12 @@ fun SettingsScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Text("ObscuraCalc", style = MaterialTheme.typography.headlineSmall)
                     Text(
-                        "Offline calculator and conversion tools designed to stay quiet, local, and honest about their limits.",
+                        text = stringResource(R.string.settings_app_name),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_app_description),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -86,31 +91,48 @@ fun SettingsScreen(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text("Private Space Session", style = MaterialTheme.typography.titleLarge)
                         Text(
-                            "Vault protection is user-space only. It encrypts app-held data at rest, but it does not replace the operating system sandbox or hardware-backed secure folders.",
+                            text = stringResource(R.string.settings_private_space_title),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = stringResource(R.string.settings_private_space_desc),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         OutlinedTextField(
                             value = securitySettings.lockTimeoutSeconds.toString(),
-                            onValueChange = { it.toIntOrNull()?.let(onUpdateLockTimeoutSeconds) },
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty()) {
+                                    onUpdateLockTimeoutSeconds(0)
+                                } else {
+                                    newValue.toIntOrNull()?.let(onUpdateLockTimeoutSeconds)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Lock timeout (seconds)") },
+                            label = { Text(stringResource(R.string.settings_lock_timeout)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         )
                         OutlinedTextField(
                             value = securitySettings.wipeAfterFailures.toString(),
-                            onValueChange = { it.toIntOrNull()?.let(onUpdateWipeAfterFailures) },
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty()) {
+                                    onUpdateWipeAfterFailures(0)
+                                } else {
+                                    newValue.toIntOrNull()?.let(onUpdateWipeAfterFailures)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Wipe after failed attempts (0 disables)") },
+                            label = { Text(stringResource(R.string.settings_wipe_failures)) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text("Decoy response")
+                                Text(stringResource(R.string.settings_decoy_response))
                                 Text(
-                                    "When enabled, failed authentication returns quietly to calculator behavior.",
+                                    text = stringResource(R.string.settings_decoy_response_desc),
                                     style = MaterialTheme.typography.bodySmall,
                                 )
                             }
@@ -119,7 +141,10 @@ fun SettingsScreen(
                                 onCheckedChange = onUpdateDecoyMode,
                             )
                         }
-                        AssistChip(onClick = onLockVault, label = { Text("Lock now") })
+                        AssistChip(
+                            onClick = onLockVault,
+                            label = { Text(stringResource(R.string.settings_lock_now)) }
+                        )
                     }
                 }
             }
@@ -133,7 +158,10 @@ fun SettingsScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Text("Legal & Documentation", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = stringResource(R.string.settings_legal_docs),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     LegalDocDestination.entries.forEach { destination ->
                         AssistChip(
                             onClick = { onOpenLegalDoc(destination) },
@@ -152,9 +180,12 @@ fun SettingsScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Text("About", style = MaterialTheme.typography.titleLarge)
                     Text(
-                        text = "Version $appVersion",
+                        text = stringResource(R.string.settings_about),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_version, appVersion),
                         modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -166,30 +197,30 @@ fun SettingsScreen(
                                 onVersionTapThresholdReached()
                             }
                         },
-                        label = { Text("Version details") },
+                        label = { Text(stringResource(R.string.settings_version_details)) },
                     )
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Source Code",
+                        text = stringResource(R.string.settings_source_code),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "https://github.com/akagafin/ObsuraCalc",
-                        color = Color.Blue,
+                        text = "https://github.com/akagafin/ObscuraCalc",
+                        color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodyMedium,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier.clickable {
-                            uriHandler.openUri("https://github.com/akagafin/ObsuraCalc")
+                            uriHandler.openUri("https://github.com/akagafin/ObscuraCalc")
                         }
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        "No analytics, no advertising, no cloud sync, and no mandatory Google Play Services.",
+                        text = stringResource(R.string.settings_privacy_footer),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

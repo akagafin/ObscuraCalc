@@ -1,0 +1,17 @@
+<resources>
+    <string name="settings_app_name">ObscuraCalc</string>
+    <string name="settings_about">About</string>
+    <string name="settings_app_description">Offline calculator and conversion tools designed to stay quiet, local, and honest about their limits.</string>
+    <string name="settings_private_space_title">Private Space Session</string>
+    <string name="settings_private_space_desc">Vault protection is user-space only. It encrypts app-held data at rest, but it does not replace the operating system sandbox or hardware-backed secure folders.</string>
+    <string name="settings_lock_timeout">Lock timeout (seconds)</string>
+    <string name="settings_wipe_failures">Wipe after failed attempts (0 disables)</string>
+    <string name="settings_decoy_response">Decoy response</string>
+    <string name="settings_decoy_response_desc">When enabled, failed authentication returns quietly to calculator behavior.</string>
+    <string name="settings_lock_now">Lock now</string>
+    <string name="settings_legal_docs">Legal &amp; Documentation</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_version_details">Version details</string>
+    <string name="settings_source_code">Source Code</string>
+    <string name="settings_privacy_footer">No analytics, no advertising, no cloud sync, and no mandatory Google Play Services.</string>
+</resources>

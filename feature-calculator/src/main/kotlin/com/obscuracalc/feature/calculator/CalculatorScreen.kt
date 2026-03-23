@@ -1,185 +1,144 @@
 package com.obscuracalc.feature.calculator
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Backspace
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.automirrored.outlined.Backspace
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SyncAlt
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
-fun rememberCalculatorController(): CalculatorController = remember { CalculatorController() }
+fun rememberCalculatorController(): CalculatorController {
+    return remember { CalculatorController() }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculatorScreen(
     controller: CalculatorController,
-    modifier: Modifier = Modifier,
-    onEvaluateExpression: (String) -> Unit = {},
+    onEvaluateExpression: (String) -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToConverter: () -> Unit,
+    onNavigateToVault: () -> Unit
 ) {
-    val state = controller.state
-    val scientificRows = listOf(
-        listOf("sin", "cos", "tan", "sqrt", "^"),
-        listOf("asin", "acos", "atan", "log", "ln"),
-        listOf("(", ")", "pi", "e", "exp"),
-    )
-    val keypadRows = listOf(
-        listOf("7", "8", "9", "/", "C"),
-        listOf("4", "5", "6", "*", "-"),
-        listOf("1", "2", "3", "+", "."),
-        listOf("0", "00", ",", "=", "DEL"),
-    )
+    val state by controller.stateFlow.collectAsState()
 
-    Surface(modifier = modifier.fillMaxSize()) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("ObscuraCalc") },
+                actions = {
+                    IconButton(onClick = onNavigateToVault) {
+                        Icon(Icons.Default.Lock, contentDescription = "Vault")
+                    }
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                }
+            )
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(padding)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            // Expression Display - Google-like but distinct
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.3f)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Bottom
             ) {
-                FilledTonalButton(onClick = controller::toggleAngleMode, modifier = Modifier.weight(1f)) {
-                    Text(state.angleMode.name)
-                }
-                FilledTonalButton(onClick = controller::memoryClear, modifier = Modifier.weight(1f)) {
-                    Text("MC")
-                }
-                FilledTonalButton(onClick = controller::memoryRecall, modifier = Modifier.weight(1f)) {
-                    Text("MR")
-                }
-                FilledTonalButton(onClick = controller::memoryAdd, modifier = Modifier.weight(1f)) {
-                    Text("M+")
-                }
-                FilledTonalButton(onClick = controller::memoryStore, modifier = Modifier.weight(1f)) {
-                    Text("MS")
+                Text(
+                    text = state.expression,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = state.display,
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = if (state.display.length > 8) 48.sp else 64.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1
+                )
+            }
+
+            // Quick Actions
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item {
+                    AssistChip(
+                        onClick = onNavigateToConverter,
+                        label = { Text("Converter") },
+                        leadingIcon = { Icon(Icons.Default.SyncAlt, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    )
                 }
             }
 
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                shape = RoundedCornerShape(28.dp),
+            // Keypad - Material 3 Tonal Palette
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Memory ${state.memoryPreview}",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    val keypad = listOf(
+                        listOf("AC", "DEL", "%", "/"),
+                        listOf("7", "8", "9", "*"),
+                        listOf("4", "5", "6", "-"),
+                        listOf("1", "2", "3", "+"),
+                        listOf("0", ".", "MS", "=")
                     )
-                    Text(
-                        text = state.display,
-                        style = MaterialTheme.typography.displaySmall,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    if (state.lastError != null) {
-                        Text(
-                            text = state.lastError,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium,
+
+                    keypad.forEach { row ->
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-            }
-
-            if (state.history.isNotEmpty()) {
-                Card(shape = RoundedCornerShape(24.dp)) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        items(state.history) { item ->
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-            }
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                scientificRows.forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        row.forEach { label ->
-                            CalcButton(
-                                label = label,
-                                modifier = Modifier.weight(1f),
-                                onClick = { controller.append(label) },
-                            )
-                        }
-                    }
-                }
-
-                keypadRows.forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        row.forEach { label ->
-                            when (label) {
-                                "C" -> FilledTonalButton(
-                                    onClick = controller::clear,
-                                    modifier = Modifier.weight(1f),
-                                ) { Text("AC") }
-
-                                "DEL" -> OutlinedButton(
-                                    onClick = controller::deleteLast,
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Icon(Icons.Outlined.Backspace, contentDescription = "Delete")
-                                }
-
-                                "=" -> Button(
-                                    onClick = {
-                                        onEvaluateExpression(controller.state.expression)
-                                        controller.evaluate()
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                ) { Text("=") }
-
-                                else -> CalcButton(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            row.forEach { label ->
+                                CalculatorButton(
                                     label = label,
                                     modifier = Modifier.weight(1f),
                                     onClick = {
-                                        if (label == ",") controller.append(",") else controller.append(label)
-                                    },
+                                        when (label) {
+                                            "AC" -> controller.clear()
+                                            "DEL" -> controller.deleteLast()
+                                            "=" -> {
+                                                onEvaluateExpression(controller.state.expression)
+                                                controller.evaluate()
+                                            }
+                                            "MS" -> controller.memoryStore()
+                                            else -> controller.append(label)
+                                        }
+                                    }
                                 )
                             }
                         }
@@ -191,16 +150,53 @@ fun CalculatorScreen(
 }
 
 @Composable
-private fun CalcButton(
+fun CalculatorButton(
     label: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier.height(56.dp),
-        shape = RoundedCornerShape(18.dp),
+    val isOperator = label in listOf("/", "*", "-", "+", "=")
+    val isSpecial = label in listOf("AC", "DEL", "%", "MS")
+    val isEquals = label == "="
+
+    val containerColor = when {
+        isEquals -> MaterialTheme.colorScheme.primary
+        isOperator -> MaterialTheme.colorScheme.primaryContainer
+        isSpecial -> MaterialTheme.colorScheme.tertiaryContainer
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+    
+    val contentColor = when {
+        isEquals -> MaterialTheme.colorScheme.onPrimary
+        isOperator -> MaterialTheme.colorScheme.onPrimaryContainer
+        isSpecial -> MaterialTheme.colorScheme.onTertiaryContainer
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .background(containerColor)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
     ) {
-        Text(text = label)
+        if (label == "DEL") {
+            Icon(
+                Icons.AutoMirrored.Outlined.Backspace,
+                contentDescription = "Delete",
+                tint = contentColor,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = if (isOperator || isEquals) FontWeight.Bold else FontWeight.Medium,
+                    fontSize = if (label.length > 2) 16.sp else 22.sp
+                ),
+                color = contentColor
+            )
+        }
     }
 }

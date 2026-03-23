@@ -1,5 +1,6 @@
 package com.obscuracalc.app.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -79,6 +80,7 @@ private sealed class Destination(
     data object Legal : Destination("legal/{doc}", "Legal", Icons.Outlined.Description)
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ObscuraCalcApp(container: AppContainer) {
     val navController = rememberNavController()
@@ -182,6 +184,17 @@ fun ObscuraCalcApp(container: AppContainer) {
                                     }
                                 }
                             },
+                            onNavigateToSettings = { navController.navigate(Destination.Settings.route) },
+                            onNavigateToConverter = { navController.navigate(Destination.Converter.route) },
+                            onNavigateToVault = {
+                                if (sessionState.isUnlocked) {
+                                    navController.navigate(Destination.Vault.route)
+                                } else if (sessionState.isConfigured) {
+                                    navController.navigate(Destination.Auth.route)
+                                } else {
+                                    navController.navigate(Destination.Setup.route)
+                                }
+                            }
                         )
                     }
                     composable(Destination.Converter.route) {

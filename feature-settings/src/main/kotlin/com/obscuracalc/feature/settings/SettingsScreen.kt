@@ -1,10 +1,13 @@
 package com.obscuracalc.feature.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +23,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.obscuracalc.core.security.model.SecuritySettings
 
@@ -45,6 +52,8 @@ fun SettingsScreen(
     onLockVault: () -> Unit = {},
 ) {
     var versionTapCount by remember { mutableIntStateOf(0) }
+    val uriHandler = LocalUriHandler.current
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -159,6 +168,26 @@ fun SettingsScreen(
                         },
                         label = { Text("Version details") },
                     )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Source Code",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "https://github.com/akagafin/ObsuraCalc",
+                        color = Color.Blue,
+                        style = MaterialTheme.typography.bodyMedium,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://github.com/akagafin/ObsuraCalc")
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         "No analytics, no advertising, no cloud sync, and no mandatory Google Play Services.",
                         style = MaterialTheme.typography.bodySmall,

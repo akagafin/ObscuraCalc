@@ -29,15 +29,17 @@ private val DarkColors = darkColorScheme(
     primaryContainer = Color(0xFF27443C),
     secondary = Color(0xFFC1C9BC),
     tertiary = Color(0xFFD6C1A8),
-    background = Color(0xFF111412),
-    surface = Color(0xFF171A18),
-    surfaceVariant = Color(0xFF30352F),
+    background = Color(0xFF000000), // True black for "Tema Hitam"
+    surface = Color(0xFF121212),    // Dark surface
+    surfaceVariant = Color(0xFF1E1E1E),
+    onBackground = Color(0xFFE1E3E1),
+    onSurface = Color(0xFFE1E3E1),
 )
 
 @Composable
 fun ObscuraCalcTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Disabled by default to follow custom black theme
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current

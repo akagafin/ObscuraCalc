@@ -1,191 +1,60 @@
 # ObscuraCalc
 
-ObscuraCalc is an offline-first Android application that combines a real scientific calculator, offline unit and currency conversion, and an authenticated private space for encrypted file storage.
+ObscuraCalc adalah aplikasi Android offline-first yang menggabungkan kalkulator saintifik nyata, konverter unit dan mata uang offline, serta **Private Space** (Vault) terenkripsi untuk penyimpanan file aman.
 
-The project is designed for privacy-respecting distribution channels such as F-Droid and direct APK delivery. It does not include analytics, advertising, telemetry, cloud sync, user accounts, or mandatory Google Play Services.
+Aplikasi ini dirancang untuk privasi total: tanpa analitik, tanpa iklan, tanpa telemetri, dan **TANPA IZIN INTERNET**.
 
-## Status
+## Fitur Utama
 
-This repository contains a fresh multi-module Kotlin/Compose implementation scaffolded for long-term open-source maintenance.
+### 1. Kalkulator Saintifik
+- Operasi aritmatika standar dan fungsi saintifik (`sin`, `cos`, `log`, `sqrt`, dll).
+- Riwayat perhitungan dan register memori (MS, MR, M+, M-).
+- Mode Derajat (DEG) dan Radian (RAD).
 
-The local workspace used to generate this project did not include Java, Gradle, Git, or Android SDK tooling, so build validation could not be completed here. Gradle scripts and wrapper metadata are included, but `gradle-wrapper.jar` was not available to vendor from this environment and must be generated in a full Android development setup before the wrapper can run end-to-end.
+### 2. Konverter Offline
+- Konversi Panjang, Massa, Area, Volume, Suhu, Kecepatan, Waktu, dan Ukuran Digital.
+- Konverter Mata Uang dengan input kurs manual (menjaga privasi karena tidak ada update otomatis via internet).
 
-## Project Overview
+### 3. Private Space (Vault) - Fitur Tersembunyi
+Fitur ini memungkinkan Anda menyimpan file secara terenkripsi di dalam folder privat aplikasi yang tidak bisa diakses oleh aplikasi galeri atau file manager standar.
 
-ObscuraCalc has three product surfaces:
+#### Cara Mengaktifkan Vault (Setup Awal):
+Karena ini adalah aplikasi penyamaran, menu setup tidak muncul secara mencolok:
+1.  Buka **Settings**.
+2.  Scroll ke paling bawah hingga menemukan informasi **Version**.
+3.  Ketuk (Tap) pada teks **"Version 0.1.0"** sebanyak **7 kali** berturut-turut.
+4.  Layar setup Vault akan terbuka. Silakan buat PIN atau Password Anda.
 
-1. A genuinely usable scientific calculator with history, memory registers, constants, and testable deterministic expression parsing.
-2. Fully offline converters for length, mass, area, volume, temperature, speed, time, digital size, and manually managed currency rates.
-3. A user-configured private space that encrypts app-held files at rest and locks automatically when app context changes.
+#### Cara Membuka Vault:
+- **Metode Normal**: Melalui ikon Gembok di Top Bar atau menu navigasi.
+- **Hidden Trigger**: Jika dikonfigurasi, Anda bisa mengetikkan urutan angka rahasia (misal: `123456`) langsung di layar kalkulator lalu tekan `=` untuk memicu layar login.
 
-## Feature List
+## Keamanan & Privasi
 
-### Calculator
+### Enkripsi Data
+- **AES-256-GCM**: Semua file di dalam Vault dienkripsi menggunakan standar militer.
+- **Android Keystore**: Kunci enkripsi dilindungi oleh sistem perangkat keras perangkat (jika tersedia), sehingga tidak bisa dicuri dengan copy-paste file sistem.
+- **Biometric Unlock**: Mendukung Sidik Jari atau Face Unlock yang aman.
 
-- Standard arithmetic and parentheses
-- Scientific functions: `sin`, `cos`, `tan`, inverse trig, `log`, `ln`, `exp`, `sqrt`, powers, constants
-- Degree/radian toggle
-- Memory store, recall, add, subtract, clear
-- Deterministic parser in `core-calculator` with JVM tests
+### Fitur Perlindungan Lanjut
+- **Auto-Lock**: Vault otomatis terkunci saat aplikasi keluar, layar mati, atau berpindah aplikasi.
+- **Wipe After Failures**: (Opsional) Menghapus seluruh isi Vault secara otomatis jika salah memasukkan PIN berkali-kali (Default: Mati).
+- **Decoy Mode**: Jika salah PIN, aplikasi akan berpindah kembali ke kalkulator seolah-olah tidak terjadi apa-apa, untuk mengecoh orang yang mencoba mengintip.
+- **Privacy Window**: Mencegah aplikasi muncul di *Recent Apps* (screenshot otomatis sistem Android) saat Vault sedang terbuka.
 
-### Converter
+## PENTING: Peringatan Kehilangan Data
 
-- Offline conversion categories:
-  - Length
-  - Mass
-  - Area
-  - Volume
-  - Temperature
-  - Speed
-  - Time
-  - Digital size
-- Currency conversion with:
-  - Manual base currency selection
-  - Manual rate entry
-  - JSON import
-  - CSV import
-  - No automatic updates
+**HARAP BACA DENGAN TELITI:**
+1.  **Lupa PIN/Password**: Karena enkripsi bersifat lokal dan tidak ada server, **TIDAK ADA fitur "Lupa Password"**. Jika Anda lupa, data di dalam Vault tidak dapat dipulihkan.
+2.  **Uninstal Aplikasi**: Menghapus aplikasi akan menghapus seluruh data di dalam Vault. Pastikan melakukan **Export** atau **Backup** file penting sebelum menghapus aplikasi.
+3.  **Wipe Feature**: Jika fitur "Wipe After Failures" diaktifkan, pastikan Anda ingat PIN Anda. Data yang terhapus karena salah PIN tidak bisa dikembalikan.
+4.  **Backup Manual**: Lakukan backup secara rutin ke penyimpanan eksternal melalui menu Vault. File backup juga akan dienkripsi dengan password tambahan yang Anda buat.
 
-### Private Space
+## Izin (Permissions)
 
-- PIN or password based vault setup
-- Optional biometric unlock via `BiometricPrompt`
-- Optional hidden calculator input trigger after vault setup
-- Automatic locking on background, screen off, explicit lock, and process loss
-- AES-256-GCM encrypted file storage in app-private internal storage
-- Manual import from system storage
-- Manual export to system storage
-- Manual encrypted backup and restore
-- Advanced off-by-default wipe and decoy options
+ObscuraCalc hanya meminta izin yang benar-benar diperlukan:
+- `USE_BIOMETRIC`: Hanya digunakan jika Anda mengaktifkan Fingerprint/Face Unlock.
+- **TIDAK ADA IZIN INTERNET**: Menjamin data Anda tidak akan pernah terkirim ke server mana pun.
 
-## Privacy Philosophy
-
-ObscuraCalc keeps privacy simple:
-
-- Everything works offline.
-- There is no network permission.
-- No personal data is collected.
-- No usage metrics are sent anywhere.
-- Local encryption protects vault content at rest inside app-controlled storage.
-- Exporting or sharing files happens only when the user explicitly chooses a destination.
-
-## Security Summary
-
-ObscuraCalc is a user-space Android application. It can provide meaningful protection against casual snooping and unauthorized access by other people who use the same device, but it is not a system-level secure folder and does not claim absolute secrecy.
-
-### What it does
-
-- Stores vault files inside app-private storage
-- Encrypts vault content at rest with AES-256-GCM
-- Generates keystore-backed wrapping keys on device
-- Requires authentication before vault access
-- Locks on app background and screen-off events
-- Avoids network-based exfiltration by not requesting internet access
-
-### What it does not do
-
-- Clone arbitrary third-party Android apps
-- Bypass Android sandbox rules
-- Protect against a rooted or compromised operating system
-- Prevent lawful forensic access
-- Guarantee recovery if the user forgets credentials or destroys backups
-
-The full threat model is in [docs/THREAT_MODEL.md](/C:/Users/admin/Documents/projecto/docs/THREAT_MODEL.md).
-
-## Permissions
-
-ObscuraCalc intentionally requests as little as possible.
-
-- `android.permission.USE_BIOMETRIC`
-  Used only if the user enables biometric unlock for the vault.
-
-The app does not request `INTERNET`, storage, contacts, camera, location, microphone, or advertising permissions.
-
-File import and export use the Storage Access Framework, which lets the user choose files and destinations without broad storage access.
-
-## Architecture
-
-High-level architecture documentation lives in [docs/ARCHITECTURE.md](/C:/Users/admin/Documents/projecto/docs/ARCHITECTURE.md).
-
-Module summary:
-
-- `app`: navigation, theme, lifecycle lock hooks, application container
-- `core-calculator`: parser, evaluator, memory register, JVM tests
-- `core-converter`: unit conversion logic and currency import
-- `core-security`: credential handling, keystore integration, session lock state
-- `core-vault`: encrypted blob storage, metadata index, backup/restore
-- `feature-calculator`: calculator UI
-- `feature-converter`: converter UI and local currency rate persistence
-- `feature-vault`: vault setup, auth, explorer, preview, backup UI
-- `feature-settings`: settings and hidden onboarding path
-- `feature-legal`: in-app legal document rendering
-
-## Installation
-
-### F-Droid
-
-When an F-Droid build is published:
-
-1. Open F-Droid.
-2. Search for `ObscuraCalc`.
-3. Review the requested permissions.
-4. Install and launch.
-
-### Direct APK
-
-1. Build a release APK in a local Android development environment.
-2. Verify the signing key and release notes.
-3. Install the APK manually.
-
-## Local Development
-
-Typical setup:
-
-1. Install Android Studio or a compatible Android SDK + JDK 17 toolchain.
-2. Regenerate the Gradle wrapper jar if needed with a local Gradle install.
-3. Open the project and sync dependencies.
-4. Run unit tests in `core-calculator` and `core-converter`.
-5. Run instrumentation tests on a device or emulator for vault flows.
-
-## Usage Overview
-
-### Everyday Tools
-
-- Launching the app opens the calculator.
-- The calculator remains fully usable when the vault is locked.
-- The converter is available from normal navigation.
-
-### Private Space
-
-- Initial vault setup is intentionally non-prominent and should be documented carefully for users.
-- After setup, users may enable a hidden calculator sequence as an unlock path.
-- Vault files remain inaccessible until a configured credential or biometric flow succeeds.
-
-### Backups
-
-- Backups are manual.
-- Backup archives are separately encrypted with a user-chosen passphrase.
-- Restores import data into the currently configured vault.
-
-## Backup and Data Loss Warning
-
-Losing a vault credential or forgetting a backup passphrase may permanently prevent access to stored files.
-
-Wipe-after-failures is intentionally disabled by default because it can cause irreversible data loss. Users should only enable it after understanding the consequences and creating a tested backup.
-
-## Legal Notice
-
-ObscuraCalc is not Samsung Secure Folder, Apple Secure Enclave, or a system-level secure container. It does not claim anonymity, invulnerability, or protection against forensic or state-level adversaries.
-
-Users remain responsible for:
-
-- Choosing strong credentials
-- Keeping the underlying device trustworthy
-- Maintaining working backups
-- Understanding the documented threat model and limitations
-
-## License
-
-ObscuraCalc is licensed under the Apache License 2.0.
-
-See [LICENSE](/C:/Users/admin/Documents/projecto/LICENSE) for the full text.
+## Lisensi
+ObscuraCalc dilisensikan di bawah Apache License 2.0.

@@ -60,7 +60,10 @@ class AndroidVaultAuthManager(
         val hiddenTriggerHash = if (!hasHiddenTrigger) {
             null
         } else {
-            CredentialCrypto.deriveCredentialHash(normalizeHiddenTrigger(hiddenTrigger!!), hiddenTriggerSalt!!)
+            CredentialCrypto.deriveCredentialHash(
+                normalizeHiddenTrigger(hiddenTrigger!!),
+                hiddenTriggerSalt!!
+            )
         }
         val settings = SecuritySettings(
             hiddenTriggerEnabled = hasHiddenTrigger,
@@ -106,22 +109,23 @@ class AndroidVaultAuthManager(
         mutableSessionState.value = mutableSessionState.value.copy(isUnlocked = false)
     }
 
-    override suspend fun updateSettings(transform: (SecuritySettings) -> SecuritySettings) = mutex.withLock {
-        val existing = configStore.read() ?: return@withLock
-        val transformed = transform(existing.settings)
-        val updated = existing.copy(
-            wrappedMasterKeyByBiometric = if (transformed.biometricEnabled) {
-                existing.wrappedMasterKeyByBiometric
-            } else {
-                null
-            },
-            settings = transformed,
-        )
-        configStore.write(updated)
-        mutableSessionState.value = mutableSessionState.value.copy(
-            biometricEnabled = updated.settings.biometricEnabled,
-        )
-    }
+    override suspend fun updateSettings(transform: (SecuritySettings) -> SecuritySettings) =
+        mutex.withLock {
+            val existing = configStore.read() ?: return@withLock
+            val transformed = transform(existing.settings)
+            val updated = existing.copy(
+                wrappedMasterKeyByBiometric = if (transformed.biometricEnabled) {
+                    existing.wrappedMasterKeyByBiometric
+                } else {
+                    null
+                },
+                settings = transformed,
+            )
+            configStore.write(updated)
+            mutableSessionState.value = mutableSessionState.value.copy(
+                biometricEnabled = updated.settings.biometricEnabled,
+            )
+        }
 
     override suspend fun matchesHiddenTrigger(candidate: CharArray): Boolean {
         val config = configStore.read() ?: return false
@@ -135,7 +139,8 @@ class AndroidVaultAuthManager(
             CredentialCrypto.clear(candidate)
             return false
         }
-        val actualHash = CredentialCrypto.deriveCredentialHash(normalizeHiddenTrigger(candidate), salt)
+        val actualHash =
+            CredentialCrypto.deriveCredentialHash(normalizeHiddenTrigger(candidate), salt)
         CredentialCrypto.clear(candidate)
         return CredentialCrypto.constantTimeEquals(expectedHash, actualHash).also {
             actualHash.fill(0)
@@ -164,8 +169,10 @@ class AndroidVaultAuthManager(
     }
 
     override suspend fun completeBiometricEnrollment(cipher: Cipher): AuthResult = mutex.withLock {
-        val config = configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
-        val sessionKey = sessionMasterKey ?: return@withLock AuthResult.failure("Unlock the vault before enabling biometrics")
+        val config =
+            configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
+        val sessionKey = sessionMasterKey
+            ?: return@withLock AuthResult.failure("Unlock the vault before enabling biometrics")
         val wrapped = keystoreKeyManager.completeBiometricWrap(cipher, sessionKey)
         val updated = config.copy(
             wrappedMasterKeyByBiometric = wrapped,
@@ -183,7 +190,8 @@ class AndroidVaultAuthManager(
     }
 
     override suspend fun unlockWithBiometric(cipher: Cipher): AuthResult = mutex.withLock {
-        val config = configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
+        val config =
+            configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
         val wrapped = config.wrappedMasterKeyByBiometric
             ?: return@withLock AuthResult.failure("Biometric unlock is not enabled")
         val masterKey = runCatching {
@@ -210,13 +218,15 @@ class AndroidVaultAuthManager(
         credential: CharArray,
         expectedType: CredentialType,
     ): AuthResult = mutex.withLock {
-        val config = configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
+        val config =
+            configStore.read() ?: return@withLock AuthResult.failure("Vault is not configured")
         if (config.credentialType != expectedType) {
             CredentialCrypto.clear(credential)
             return@withLock AuthResult.failure("Use the configured authentication method")
         }
 
-        val actualHash = CredentialCrypto.deriveCredentialHash(credential, config.credentialHashSalt)
+        val actualHash =
+            CredentialCrypto.deriveCredentialHash(credential, config.credentialHashSalt)
         if (!CredentialCrypto.constantTimeEquals(actualHash, config.credentialHash)) {
             actualHash.fill(0)
             CredentialCrypto.clear(credential)

@@ -36,7 +36,11 @@ class VaultHomeController(
         state = state.copy(isBusy = true, message = null)
         state = runCatching {
             repository.importFromUri(uri)
-            state.copy(entries = repository.listEntries(), isBusy = false, message = "Imported into vault")
+            state.copy(
+                entries = repository.listEntries(),
+                isBusy = false,
+                message = "Imported into vault"
+            )
         }.getOrElse { error ->
             state.copy(isBusy = false, message = error.message ?: "Unable to import file")
         }

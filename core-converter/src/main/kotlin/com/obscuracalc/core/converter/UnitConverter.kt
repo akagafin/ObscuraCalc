@@ -118,13 +118,17 @@ class UnitConverter(
     ): BigDecimal {
         val celsius = when (fromUnit) {
             "c" -> value
-            "f" -> value.subtract(BigDecimal("32")).multiply(BigDecimal("5")).divide(BigDecimal("9"), mathContext)
+            "f" -> value.subtract(BigDecimal("32")).multiply(BigDecimal("5"))
+                .divide(BigDecimal("9"), mathContext)
+
             "k" -> value.subtract(BigDecimal("273.15"))
             else -> throw IllegalArgumentException("Unknown temperature unit: $fromUnit")
         }
         return when (toUnit) {
             "c" -> celsius
-            "f" -> celsius.multiply(BigDecimal("9")).divide(BigDecimal("5"), mathContext).add(BigDecimal("32"))
+            "f" -> celsius.multiply(BigDecimal("9")).divide(BigDecimal("5"), mathContext)
+                .add(BigDecimal("32"))
+
             "k" -> celsius.add(BigDecimal("273.15"))
             else -> throw IllegalArgumentException("Unknown temperature unit: $toUnit")
         }

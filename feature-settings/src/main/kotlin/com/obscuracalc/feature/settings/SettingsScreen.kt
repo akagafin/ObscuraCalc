@@ -199,9 +199,9 @@ fun SettingsScreen(
                         },
                         label = { Text(stringResource(R.string.settings_version_details)) },
                     )
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Text(
                         text = stringResource(R.string.settings_source_code),
                         style = MaterialTheme.typography.titleSmall,

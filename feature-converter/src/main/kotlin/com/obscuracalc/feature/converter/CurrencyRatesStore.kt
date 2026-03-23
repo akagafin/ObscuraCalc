@@ -2,7 +2,6 @@ package com.obscuracalc.feature.converter
 
 import android.content.Context
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
@@ -10,7 +9,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import java.math.BigDecimal
 
 class CurrencyRatesStore(context: Context) {
-    private val preferences = context.getSharedPreferences("obscuracalc_currency_rates", Context.MODE_PRIVATE)
+    private val preferences =
+        context.getSharedPreferences("obscuracalc_currency_rates", Context.MODE_PRIVATE)
 
     fun load(): LocalCurrencyState {
         val raw = preferences.getString(KEY_JSON, null) ?: return LocalCurrencyState()

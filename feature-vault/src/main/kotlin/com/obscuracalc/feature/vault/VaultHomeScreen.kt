@@ -45,7 +45,8 @@ import kotlinx.coroutines.launch
 fun rememberVaultHomeController(
     repository: VaultRepository,
     backupService: BackupService,
-): VaultHomeController = remember(repository, backupService) { VaultHomeController(repository, backupService) }
+): VaultHomeController =
+    remember(repository, backupService) { VaultHomeController(repository, backupService) }
 
 @Composable
 fun VaultHomeScreen(
@@ -59,34 +60,38 @@ fun VaultHomeScreen(
     var backupDialogMode by remember { mutableStateOf<BackupDialogMode?>(null) }
     var pendingPassphrase by remember { mutableStateOf("") }
 
-    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        uri?.let { scope.launch { controller.importFile(it) } }
-    }
-    val restoreLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        if (uri != null && backupDialogMode == BackupDialogMode.RESTORE) {
-            scope.launch {
-                controller.restoreBackup(uri, pendingPassphrase.toCharArray())
-                pendingPassphrase = ""
-                backupDialogMode = null
+    val importLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            uri?.let { scope.launch { controller.importFile(it) } }
+        }
+    val restoreLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            if (uri != null && backupDialogMode == BackupDialogMode.RESTORE) {
+                scope.launch {
+                    controller.restoreBackup(uri, pendingPassphrase.toCharArray())
+                    pendingPassphrase = ""
+                    backupDialogMode = null
+                }
             }
         }
-    }
-    val backupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri: Uri? ->
-        if (uri != null && backupDialogMode == BackupDialogMode.CREATE) {
-            scope.launch {
-                controller.createBackup(uri, pendingPassphrase.toCharArray())
-                pendingPassphrase = ""
-                backupDialogMode = null
+    val backupLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri: Uri? ->
+            if (uri != null && backupDialogMode == BackupDialogMode.CREATE) {
+                scope.launch {
+                    controller.createBackup(uri, pendingPassphrase.toCharArray())
+                    pendingPassphrase = ""
+                    backupDialogMode = null
+                }
             }
         }
-    }
-    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("*/*")) { uri: Uri? ->
-        val exportEntry = pendingExport ?: return@rememberLauncherForActivityResult
-        if (uri != null) {
-            scope.launch { controller.exportFile(exportEntry.id, uri) }
+    val exportLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("*/*")) { uri: Uri? ->
+            val exportEntry = pendingExport ?: return@rememberLauncherForActivityResult
+            if (uri != null) {
+                scope.launch { controller.exportFile(exportEntry.id, uri) }
+            }
+            pendingExport = null
         }
-        pendingExport = null
-    }
 
     LaunchedEffect(Unit) {
         controller.refresh()
@@ -124,7 +129,8 @@ fun VaultHomeScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when (preview.summary.mediaKind) {
                         MediaKind.IMAGE -> {
-                            val bitmap = BitmapFactory.decodeByteArray(preview.bytes, 0, preview.bytes.size)
+                            val bitmap =
+                                BitmapFactory.decodeByteArray(preview.bytes, 0, preview.bytes.size)
                             if (bitmap != null) {
                                 Image(
                                     bitmap = bitmap.asImageBitmap(),

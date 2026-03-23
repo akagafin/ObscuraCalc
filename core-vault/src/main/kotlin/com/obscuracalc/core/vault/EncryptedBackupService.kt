@@ -4,15 +4,13 @@ import android.content.Context
 import android.net.Uri
 import com.obscuracalc.core.vault.model.VaultEntrySummary
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.long
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.io.DataInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -113,7 +111,10 @@ class EncryptedBackupService(
                                 put("displayName", JsonPrimitive(entry.displayName))
                                 put("mimeType", JsonPrimitive(entry.mimeType))
                                 put("sizeBytes", JsonPrimitive(entry.sizeBytes))
-                                put("importedAtEpochMillis", JsonPrimitive(entry.importedAtEpochMillis))
+                                put(
+                                    "importedAtEpochMillis",
+                                    JsonPrimitive(entry.importedAtEpochMillis)
+                                )
                                 put("mediaKind", JsonPrimitive(entry.mediaKind.name))
                             },
                         )
@@ -125,7 +126,8 @@ class EncryptedBackupService(
     }
 
     private fun parseManifest(inputStream: InputStream): List<BackupManifestEntry> {
-        val root = Json.parseToJsonElement(inputStream.bufferedReader().use { it.readText() }).jsonObject
+        val root =
+            Json.parseToJsonElement(inputStream.bufferedReader().use { it.readText() }).jsonObject
         return root["entries"]?.jsonArray?.map { element ->
             val obj = element.jsonObject
             BackupManifestEntry(

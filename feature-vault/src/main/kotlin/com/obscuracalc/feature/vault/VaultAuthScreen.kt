@@ -101,7 +101,8 @@ fun VaultAuthScreen(
                                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                                     val cryptoCipher = result.cryptoObject?.cipher ?: return
                                     scope.launch {
-                                        val authResult = authManager.unlockWithBiometric(cryptoCipher)
+                                        val authResult =
+                                            authManager.unlockWithBiometric(cryptoCipher)
                                         if (authResult.success) {
                                             onAuthenticated()
                                         } else {
@@ -110,7 +111,10 @@ fun VaultAuthScreen(
                                     }
                                 }
 
-                                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                                override fun onAuthenticationError(
+                                    errorCode: Int,
+                                    errString: CharSequence
+                                ) {
                                     message = errString.toString()
                                 }
 
@@ -119,7 +123,10 @@ fun VaultAuthScreen(
                                 }
                             },
                         )
-                        prompt.authenticate(authManager.biometricPromptInfo(), BiometricPrompt.CryptoObject(cipher))
+                        prompt.authenticate(
+                            authManager.biometricPromptInfo(),
+                            BiometricPrompt.CryptoObject(cipher)
+                        )
                     },
                     label = { Text("Use biometrics") },
                 )

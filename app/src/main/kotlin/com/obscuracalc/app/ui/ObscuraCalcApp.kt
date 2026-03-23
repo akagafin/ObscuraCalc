@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.view.WindowManager
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -16,9 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.SwapHoriz
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -72,12 +71,12 @@ private sealed class Destination(
     val label: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
 ) {
-    data object Calculator : Destination("calculator", "Calc", Icons.Outlined.Calculate)
-    data object Converter : Destination("converter", "Convert", Icons.Outlined.SwapHoriz)
-    data object Settings : Destination("settings", "Settings", Icons.Outlined.Tune)
-    data object Vault : Destination("vault", "Vault", Icons.Outlined.Lock)
-    data object Auth : Destination("auth", "Unlock", Icons.Outlined.Lock)
-    data object Setup : Destination("setup", "Setup", Icons.Outlined.Lock)
+    data object Calculator : Destination("calculator", "Calculator", Icons.Outlined.Calculate)
+    data object Converter : Destination("converter", "Converter", Icons.Outlined.SwapHoriz)
+    data object Settings : Destination("settings", "Settings", Icons.Outlined.MoreVert)
+    data object Vault : Destination("vault", "History", Icons.Outlined.History) // Disguised as History
+    data object Auth : Destination("auth", "Auth", Icons.Outlined.History)
+    data object Setup : Destination("setup", "Setup", Icons.Outlined.History)
     data object Legal : Destination("legal/{doc}", "Legal", Icons.Outlined.Description)
 }
 
@@ -88,7 +87,8 @@ fun ObscuraCalcApp(container: AppContainer) {
     val scope = rememberCoroutineScope()
     val calculatorController = rememberCalculatorController()
     val converterController = rememberConverterController()
-    val vaultController = rememberVaultHomeController(container.vaultRepository, container.backupService)
+    val vaultController =
+        rememberVaultHomeController(container.vaultRepository, container.backupService)
     val sessionState by container.authManager.sessionState.collectAsState()
     var securitySettings by remember { mutableStateOf(SecuritySettings()) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -107,15 +107,17 @@ fun ObscuraCalcApp(container: AppContainer) {
     AppLockEffects(container = container)
     WindowPrivacyEffects(
         shouldSecureWindow = sessionState.isUnlocked ||
-            currentRoute == Destination.Auth.route ||
-            currentRoute == Destination.Setup.route,
+                currentRoute == Destination.Auth.route ||
+                currentRoute == Destination.Setup.route,
     )
 
     val bottomDestinations = buildList {
         add(Destination.Calculator)
         add(Destination.Converter)
+        if (sessionState.isUnlocked) {
+            add(Destination.Vault)
+        }
         add(Destination.Settings)
-        if (sessionState.isUnlocked) add(Destination.Vault)
     }
 
     BoxWithConstraints {
@@ -137,7 +139,12 @@ fun ObscuraCalcApp(container: AppContainer) {
                                         restoreState = true
                                     }
                                 },
-                                icon = { Icon(destination.icon, contentDescription = destination.label) },
+                                icon = {
+                                    Icon(
+                                        destination.icon,
+                                        contentDescription = destination.label
+                                    )
+                                },
                                 label = { Text(destination.label) },
                             )
                         }
@@ -160,7 +167,12 @@ fun ObscuraCalcApp(container: AppContainer) {
                                         restoreState = true
                                     }
                                 },
-                                icon = { Icon(destination.icon, contentDescription = destination.label) },
+                                icon = {
+                                    Icon(
+                                        destination.icon,
+                                        contentDescription = destination.label
+                                    )
+                                },
                                 label = { Text(destination.label) },
                             )
                         }
@@ -271,7 +283,9 @@ fun ObscuraCalcApp(container: AppContainer) {
                                 scope.launch {
                                     container.authManager.lock(LockReason.EXPLICIT)
                                     navController.navigate(Destination.Calculator.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) { inclusive = false }
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            inclusive = false
+                                        }
                                         launchSingleTop = true
                                     }
                                 }
@@ -282,7 +296,9 @@ fun ObscuraCalcApp(container: AppContainer) {
                         route = Destination.Legal.route,
                         arguments = listOf(navArgument("doc") { type = NavType.StringType }),
                     ) { backStackEntry ->
-                        val doc = LegalDocDestination.valueOf(backStackEntry.arguments?.getString("doc") ?: "TERMS")
+                        val doc = LegalDocDestination.valueOf(
+                            backStackEntry.arguments?.getString("doc") ?: "TERMS"
+                        )
                         LegalDocumentScreen(title = doc.title, assetPath = doc.assetPath)
                     }
                 }
@@ -349,7 +365,7 @@ private fun AppLockEffects(container: AppContainer) {
                 }
             }
         }
-        
+
         // Menggunakan ContextCompat untuk registrasi receiver agar tidak deprecated
         ContextCompat.registerReceiver(
             context,

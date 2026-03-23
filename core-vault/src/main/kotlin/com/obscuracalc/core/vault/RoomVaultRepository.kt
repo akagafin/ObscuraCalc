@@ -13,9 +13,9 @@ import com.obscuracalc.core.vault.model.VaultOpenedEntry
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.long
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.io.File
 import java.io.OutputStream
 import java.util.UUID
@@ -61,7 +61,8 @@ class RoomVaultRepository(
     }
 
     override suspend fun openEntry(id: String): VaultOpenedEntry {
-        val entity = database.vaultEntryDao().findById(id) ?: throw IllegalArgumentException("Entry not found")
+        val entity = database.vaultEntryDao().findById(id)
+            ?: throw IllegalArgumentException("Entry not found")
         val metadata = decryptMetadata(entity)
         val bytes = decryptBlob(entity.blobFileName, metadata.fileKey).use { it.readBytes() }
         return VaultOpenedEntry(
@@ -107,7 +108,8 @@ class RoomVaultRepository(
                 mediaKind = detectMediaKind(mimeType),
                 fileKey = VaultCrypto.wrap(fileKey, sessionKey),
             )
-            val encryptedMetadata = VaultCrypto.wrap(metadata.toJson().encodeToByteArray(), sessionKey)
+            val encryptedMetadata =
+                VaultCrypto.wrap(metadata.toJson().encodeToByteArray(), sessionKey)
             database.vaultEntryDao().upsert(
                 VaultEntryEntity(
                     id = entryId,
@@ -122,8 +124,12 @@ class RoomVaultRepository(
         }
     }
 
-    internal suspend fun copyDecryptedEntryToStream(id: String, outputStream: OutputStream): VaultEntrySummary {
-        val entity = database.vaultEntryDao().findById(id) ?: throw IllegalArgumentException("Entry not found")
+    internal suspend fun copyDecryptedEntryToStream(
+        id: String,
+        outputStream: OutputStream
+    ): VaultEntrySummary {
+        val entity = database.vaultEntryDao().findById(id)
+            ?: throw IllegalArgumentException("Entry not found")
         val metadata = decryptMetadata(entity)
         decryptBlob(entity.blobFileName, metadata.fileKey).use { input ->
             input.copyTo(outputStream)
@@ -196,7 +202,15 @@ internal data class PlainVaultMetadata(
             put("sizeBytes", JsonPrimitive(sizeBytes))
             put("importedAtEpochMillis", JsonPrimitive(importedAtEpochMillis))
             put("mediaKind", JsonPrimitive(mediaKind.name))
-            put("fileKey", JsonPrimitive(android.util.Base64.encodeToString(fileKey, android.util.Base64.NO_WRAP)))
+            put(
+                "fileKey",
+                JsonPrimitive(
+                    android.util.Base64.encodeToString(
+                        fileKey,
+                        android.util.Base64.NO_WRAP
+                    )
+                )
+            )
         }.toString()
     }
 

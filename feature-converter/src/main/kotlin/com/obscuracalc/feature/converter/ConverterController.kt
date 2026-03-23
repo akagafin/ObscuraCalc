@@ -61,7 +61,12 @@ class ConverterController(
                 units.firstOrNull().orEmpty() to units.drop(1).firstOrNull().orEmpty()
             }
         }
-        state = state.copy(category = category, fromUnit = defaults.first, toUnit = defaults.second, outputValue = "")
+        state = state.copy(
+            category = category,
+            fromUnit = defaults.first,
+            toUnit = defaults.second,
+            outputValue = ""
+        )
     }
 
     fun updateInput(value: String) {
@@ -93,7 +98,12 @@ class ConverterController(
     fun saveManualRate() {
         val rate = state.rateValueInput.toBigDecimalOrNull() ?: return
         val updatedRates = state.rates + (state.rateCodeInput.uppercase() to rate)
-        state = state.copy(rates = updatedRates, rateCodeInput = "", rateValueInput = "", importMessage = "Rate saved locally")
+        state = state.copy(
+            rates = updatedRates,
+            rateCodeInput = "",
+            rateValueInput = "",
+            importMessage = "Rate saved locally"
+        )
         persistRates()
     }
 

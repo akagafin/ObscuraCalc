@@ -3,9 +3,9 @@ package com.obscuracalc.feature.converter
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,9 +41,10 @@ fun ConverterScreen(
     modifier: Modifier = Modifier,
 ) {
     val state = controller.state
-    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        uri?.let(controller::importRates)
-    }
+    val importLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            uri?.let(controller::importRates)
+        }
 
     LazyColumn(
         modifier = modifier
@@ -144,11 +145,22 @@ fun ConverterScreen(
                             )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(onClick = controller::saveManualRate, modifier = Modifier.weight(1f)) {
+                            Button(
+                                onClick = controller::saveManualRate,
+                                modifier = Modifier.weight(1f)
+                            ) {
                                 Text("Save rate")
                             }
                             OutlinedButton(
-                                onClick = { importLauncher.launch(arrayOf("application/json", "text/csv", "text/comma-separated-values")) },
+                                onClick = {
+                                    importLauncher.launch(
+                                        arrayOf(
+                                            "application/json",
+                                            "text/csv",
+                                            "text/comma-separated-values"
+                                        )
+                                    )
+                                },
                                 modifier = Modifier.weight(1f),
                             ) {
                                 Text("Import JSON/CSV")

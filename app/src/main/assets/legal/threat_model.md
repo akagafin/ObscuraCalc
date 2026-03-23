@@ -4,7 +4,9 @@ Last updated: March 22, 2026
 
 Summary
 
-ObscuraCalc is a user-space Android application that encrypts app-held vault data at rest and requires authentication before access. It is designed to reduce risk in everyday local privacy scenarios, not to provide absolute protection.
+ObscuraCalc is a user-space Android application that encrypts app-held vault data at rest and
+requires authentication before access. It is designed to reduce risk in everyday local privacy
+scenarios, not to provide absolute protection.
 
 Assets Protected
 

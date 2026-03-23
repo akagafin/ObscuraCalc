@@ -1,8 +1,8 @@
 package com.obscuracalc.app
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import androidx.activity.compose.setContent
+import androidx.fragment.app.FragmentActivity
 import com.obscuracalc.app.ui.ObscuraCalcApp
 import com.obscuracalc.app.ui.theme.ObscuraCalcTheme
 

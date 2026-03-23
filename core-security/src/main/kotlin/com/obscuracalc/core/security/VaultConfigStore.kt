@@ -6,8 +6,8 @@ import com.obscuracalc.core.security.model.CredentialType
 import com.obscuracalc.core.security.model.SecuritySettings
 import com.obscuracalc.core.security.model.StoredVaultConfig
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.buildJsonObject
@@ -50,7 +50,10 @@ internal class VaultConfigStore(context: Context) {
             put("credentialHashSalt", JsonPrimitive(config.credentialHashSalt.encode()))
             put("credentialWrapSalt", JsonPrimitive(config.credentialWrapSalt.encode()))
             put("wrappedMasterKeyByDevice", JsonPrimitive(config.wrappedMasterKeyByDevice.encode()))
-            put("wrappedMasterKeyByCredential", JsonPrimitive(config.wrappedMasterKeyByCredential.encode()))
+            put(
+                "wrappedMasterKeyByCredential",
+                JsonPrimitive(config.wrappedMasterKeyByCredential.encode())
+            )
             put(
                 "wrappedMasterKeyByBiometric",
                 config.wrappedMasterKeyByBiometric?.let { JsonPrimitive(it.encode()) } ?: JsonNull,

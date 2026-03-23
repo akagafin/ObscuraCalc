@@ -41,7 +41,8 @@ fun VaultSetupScreen(
 ) {
     val activity = LocalContext.current as FragmentActivity
     val scope = rememberCoroutineScope()
-    val biometricAvailable = authManager.biometricAvailability(activity) == BiometricAvailability.AVAILABLE
+    val biometricAvailable =
+        authManager.biometricAvailability(activity) == BiometricAvailability.AVAILABLE
     var credentialType by remember { mutableStateOf(CredentialType.PIN) }
     var credential by remember { mutableStateOf("") }
     var confirmation by remember { mutableStateOf("") }
@@ -69,8 +70,12 @@ fun VaultSetupScreen(
                 style = MaterialTheme.typography.bodyMedium,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(onClick = { credentialType = CredentialType.PIN }, label = { Text("PIN") })
-                AssistChip(onClick = { credentialType = CredentialType.PASSWORD }, label = { Text("Password") })
+                AssistChip(
+                    onClick = { credentialType = CredentialType.PIN },
+                    label = { Text("PIN") })
+                AssistChip(
+                    onClick = { credentialType = CredentialType.PASSWORD },
+                    label = { Text("Password") })
             }
             OutlinedTextField(
                 value = credential,
@@ -142,9 +147,13 @@ fun VaultSetupScreen(
                                     ContextCompat.getMainExecutor(activity),
                                     object : BiometricPrompt.AuthenticationCallback() {
                                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                                            val successCipher = result.cryptoObject?.cipher ?: return
+                                            val successCipher =
+                                                result.cryptoObject?.cipher ?: return
                                             scope.launch {
-                                                val enrollmentResult = authManager.completeBiometricEnrollment(successCipher)
+                                                val enrollmentResult =
+                                                    authManager.completeBiometricEnrollment(
+                                                        successCipher
+                                                    )
                                                 if (enrollmentResult.success) {
                                                     hiddenTrigger = ""
                                                     onSetupComplete()
@@ -154,7 +163,10 @@ fun VaultSetupScreen(
                                             }
                                         }
 
-                                        override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                                        override fun onAuthenticationError(
+                                            errorCode: Int,
+                                            errString: CharSequence
+                                        ) {
                                             message = errString.toString()
                                         }
 

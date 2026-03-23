@@ -34,7 +34,8 @@ class CalculatorController(
                 "sin", "cos", "tan", "asin", "acos", "atan", "log", "ln", "sqrt", "exp", "abs" -> "$token("
                 else -> token
             }
-            val newExpression = if (currentState.expression == "0") next else currentState.expression + next
+            val newExpression =
+                if (currentState.expression == "0") next else currentState.expression + next
             currentState.copy(expression = newExpression, display = newExpression, lastError = null)
         }
     }
@@ -66,13 +67,15 @@ class CalculatorController(
         val currentState = _state.value
         val expression = currentState.expression.ifBlank { currentState.display }
         val result = engine.evaluate(expression, currentState.angleMode)
-        
+
         _state.update { state ->
             if (result.isSuccess) {
                 state.copy(
                     expression = result.formattedValue,
                     display = result.formattedValue,
-                    history = listOf("$expression = ${result.formattedValue}") + state.history.take(5),
+                    history = listOf("$expression = ${result.formattedValue}") + state.history.take(
+                        5
+                    ),
                     lastError = null,
                 )
             } else {
@@ -118,6 +121,10 @@ class CalculatorController(
     }
 
     private fun refreshMemoryPreview() {
-        _state.update { it.copy(memoryPreview = memory.recall().stripTrailingZeros().toPlainString()) }
+        _state.update {
+            it.copy(
+                memoryPreview = memory.recall().stripTrailingZeros().toPlainString()
+            )
+        }
     }
 }

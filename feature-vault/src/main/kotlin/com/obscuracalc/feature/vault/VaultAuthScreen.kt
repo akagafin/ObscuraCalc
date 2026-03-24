@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -36,7 +36,7 @@ fun VaultAuthScreen(
     onAuthenticated: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalContext.current as FragmentActivity
+    val activity = LocalActivity.current as FragmentActivity
     val scope = rememberCoroutineScope()
     val sessionState by authManager.sessionState.collectAsState()
     var credential by remember { mutableStateOf("") }

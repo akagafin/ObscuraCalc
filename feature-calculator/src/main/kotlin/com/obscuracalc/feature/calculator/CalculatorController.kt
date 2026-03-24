@@ -17,6 +17,8 @@ data class CalculatorUiState(
     val angleMode: AngleMode = AngleMode.DEG,
     val memoryPreview: String = "0",
     val lastError: String? = null,
+    val isScientificExpanded: Boolean = false,
+    val isHistoryVisible: Boolean = false,
 )
 
 class CalculatorController(
@@ -32,10 +34,35 @@ class CalculatorController(
         _state.update { currentState ->
             val next = when (token) {
                 "sin", "cos", "tan", "asin", "acos", "atan", "log", "ln", "sqrt", "exp", "abs" -> "$token("
+                "x²" -> "^2"
+                "π" -> "pi"
                 else -> token
             }
             val newExpression =
                 if (currentState.expression == "0") next else currentState.expression + next
+            currentState.copy(expression = newExpression, display = newExpression, lastError = null)
+        }
+    }
+
+    fun toggleParenthesis() {
+        _state.update { currentState ->
+            val expr = currentState.expression
+            val openCount = expr.count { it == '(' }
+            val closeCount = expr.count { it == ')' }
+            val lastChar = expr.lastOrNull()
+
+            val paren = if (expr.isEmpty() ||
+                lastChar == '(' ||
+                lastChar in listOf('+', '-', '*', '/', '^', '%')
+            ) {
+                "("
+            } else if (openCount > closeCount) {
+                ")"
+            } else {
+                "("
+            }
+
+            val newExpression = if (expr == "0") paren else expr + paren
             currentState.copy(expression = newExpression, display = newExpression, lastError = null)
         }
     }
@@ -63,6 +90,14 @@ class CalculatorController(
         }
     }
 
+    fun toggleScientific() {
+        _state.update { it.copy(isScientificExpanded = !it.isScientificExpanded) }
+    }
+
+    fun toggleHistory() {
+        _state.update { it.copy(isHistoryVisible = !it.isHistoryVisible) }
+    }
+
     fun evaluate(): CalcResult {
         val currentState = _state.value
         val expression = currentState.expression.ifBlank { currentState.display }
@@ -73,16 +108,14 @@ class CalculatorController(
                 state.copy(
                     expression = result.formattedValue,
                     display = result.formattedValue,
-                    history = listOf("$expression = ${result.formattedValue}") + state.history.take(
-                        5
-                    ),
+                    history = listOf("$expression = ${result.formattedValue}") + state.history.take(19),
                     lastError = null,
                 )
             } else {
                 state.copy(
                     display = result.formattedValue,
                     lastError = result.error,
-                    history = listOf("$expression -> ${result.error}") + state.history.take(5),
+                    history = listOf("$expression → ${result.error}") + state.history.take(19),
                 )
             }
         }

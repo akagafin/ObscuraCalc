@@ -19,10 +19,7 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
+
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -111,73 +108,13 @@ fun ObscuraCalcApp(container: AppContainer) {
                 currentRoute == Destination.Setup.route,
     )
 
-    val bottomDestinations = buildList {
-        add(Destination.Calculator)
-        add(Destination.Converter)
-        if (sessionState.isUnlocked) {
-            add(Destination.Vault)
-        }
-        add(Destination.Settings)
-    }
+
 
     BoxWithConstraints {
-        val useRail = maxWidth >= 700.dp
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                if (!useRail && currentRoute in bottomDestinations.map { it.route }) {
-                    NavigationBar {
-                        bottomDestinations.forEach { destination ->
-                            NavigationBarItem(
-                                selected = currentRoute == destination.route,
-                                onClick = {
-                                    navController.navigate(destination.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        destination.icon,
-                                        contentDescription = destination.label
-                                    )
-                                },
-                                label = { Text(destination.label) },
-                            )
-                        }
-                    }
-                }
-            },
+            modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
             Row(modifier = Modifier.fillMaxSize()) {
-                if (useRail) {
-                    NavigationRail {
-                        bottomDestinations.forEach { destination ->
-                            NavigationRailItem(
-                                selected = currentRoute == destination.route,
-                                onClick = {
-                                    navController.navigate(destination.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        destination.icon,
-                                        contentDescription = destination.label
-                                    )
-                                },
-                                label = { Text(destination.label) },
-                            )
-                        }
-                    }
-                }
                 NavHost(
                     navController = navController,
                     startDestination = Destination.Calculator.route,
@@ -223,7 +160,13 @@ fun ObscuraCalcApp(container: AppContainer) {
                                 navController.navigate("legal/${doc.name}")
                             },
                             onVersionTapThresholdReached = {
-                                navController.navigate(Destination.Setup.route)
+                                if (sessionState.isUnlocked) {
+                                    navController.navigate(Destination.Vault.route)
+                                } else if (sessionState.isConfigured) {
+                                    navController.navigate(Destination.Auth.route)
+                                } else {
+                                    navController.navigate(Destination.Setup.route)
+                                }
                             },
                             onUpdateLockTimeoutSeconds = { seconds ->
                                 scope.launch {

@@ -192,7 +192,7 @@ fun SettingsScreen(
                     AssistChip(
                         onClick = {
                             versionTapCount += 1
-                            if (!vaultConfigured && versionTapCount >= 7) {
+                            if (versionTapCount >= 7) {
                                 versionTapCount = 0
                                 onVersionTapThresholdReached()
                             }

@@ -12,27 +12,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val LightColors = lightColorScheme(
-    primary = Color(0xFF425F57),
+    primary = Color(0xFF319795), // Deeper Teal for light mode
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFC8E7DC),
-    secondary = Color(0xFF5A6259),
-    tertiary = Color(0xFF6B5C4B),
-    background = Color(0xFFF4F2EC),
-    surface = Color(0xFFFFFBF5),
-    surfaceVariant = Color(0xFFE4E1D7),
+    primaryContainer = Color(0xFFB2F5EA),
+    secondary = Color(0xFF3182CE), // Function Blue (Accessible)
+    tertiary = Color(0xFF2C7A7B), // Operator Teal
+    background = Color(0xFFF7FAFC), // Very Light Gray
+    surface = Color(0xFFFFFFFF),
+    surfaceVariant = Color(0xFFEDF2F7), // Light Gray for number buttons
+    onBackground = Color(0xFF1A202C),
+    onSurface = Color(0xFF1A202C),
+    onSurfaceVariant = Color(0xFF2D3748),
+    outline = Color(0xFF718096), // Muted for history text
 )
 
 private val DarkColors = darkColorScheme(
-    primary = Color(0xFF9FCDBE),
-    onPrimary = Color(0xFF14332C),
-    primaryContainer = Color(0xFF27443C),
-    secondary = Color(0xFFC1C9BC),
-    tertiary = Color(0xFFD6C1A8),
-    background = Color(0xFF000000), // True black for "Tema Hitam"
-    surface = Color(0xFF121212),    // Dark surface
-    surfaceVariant = Color(0xFF1E1E1E),
-    onBackground = Color(0xFFE1E3E1),
-    onSurface = Color(0xFFE1E3E1),
+    primary = Color(0xFF4FD1C5), // AccentTeal
+    onPrimary = Color(0xFF0A0A0A),
+    primaryContainer = Color(0xFF319795),
+    secondary = Color(0xFF63B3ED), // Function Blue
+    tertiary = Color(0xFF81E6D9), // Operator Teal
+    background = Color(0xFF0A0A0A), // BgDark
+    surface = Color(0xFF1A1A20), 
+    surfaceVariant = Color(0xFF262630), // SurfaceButtonNum
+    onBackground = Color(0xFFF7FAFC),
+    onSurface = Color(0xFFF7FAFC),
+    onSurfaceVariant = Color(0xFFE2E8F0),
+    outline = Color(0xFF718096),
 )
 
 @Composable

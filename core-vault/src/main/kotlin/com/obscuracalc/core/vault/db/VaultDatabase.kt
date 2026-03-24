@@ -19,7 +19,7 @@ abstract class VaultDatabase : RoomDatabase() {
                 context,
                 VaultDatabase::class.java,
                 "obscuracalc_vault.db",
-            ).fallbackToDestructiveMigration().build()
+            ).fallbackToDestructiveMigration(true).build()
         }
     }
 }

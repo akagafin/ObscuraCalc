@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.obscuracalc.core.vault"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 28
@@ -26,8 +26,8 @@ android {
 dependencies {
     implementation(project(":core-security"))
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.documentfile:documentfile:1.0.1")
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.documentfile:documentfile:1.1.0")
 
     val roomVersion = "2.7.0-alpha11"
     implementation("androidx.room:room-runtime:$roomVersion")

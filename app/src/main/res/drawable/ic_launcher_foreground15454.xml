@@ -1,0 +1,46 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Calculator Body -->
+    <path
+        android:fillColor="#3069B3"
+        android:pathData="M24,30h60a8,8 0,0 1,8 8v45a8,8 0,0 1,-8 8H24a8,8 0,0 1,-8 -8V38a8,8 0,0 1,8 -8z" />
+
+    <!-- Grid/Buttons -->
+    <path
+        android:fillColor="#1D4E89"
+        android:pathData="M30,45h12v10h-12zM48,45h12v10h-12zM66,45h12v10h-12zM30,59h12v10h-12zM48,59h12v10h-12z" />
+
+    <!-- Large + Button -->
+    <path
+        android:fillColor="#4DB6AC"
+        android:pathData="M66,59h12v24h-12z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M69,70h6v2h-6zM71,68h2v6h-2z" />
+
+    <!-- Lock (Top Left) -->
+    <path
+        android:fillColor="#FBC02D"
+        android:pathData="M30,18h16a2,2 0,0 1,2 2v10h-20V20a2,2 0,0 1,2 -2z" />
+    <path
+        android:fillColor="#FBC02D"
+        android:strokeColor="#1A1A3A"
+        android:strokeWidth="1.5"
+        android:pathData="M34,18V14a4,4 0,0 1,8 0v4" />
+    <!-- Keyhole -->
+    <path
+        android:fillColor="#1A1A3A"
+        android:pathData="M37,23a1.5,1.5 0,1 0,3 0a1.5,1.5 0,0 0,-3 0zM38.5,24.5l-0.5,3h1l-0.5,-3z" />
+
+    <!-- fx symbol (Top Right) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,18l2,0l2,8l2,-8l2,0l-3,10l0,5l-2,0l0,-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M78,18l2,0l-4,15l-2,0z" />
+</vector>
